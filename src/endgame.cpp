@@ -117,6 +117,7 @@ Endgames::Endgames() {
   add<KRKN>("KRKN");
   add<KQKP>("KQKP");
   add<KQKR>("KQKR");
+  add<KRNKR>("KRNKR"); // ALAMOS
 
   add<KNPK>("KNPK");
   add<KNPKB>("KNPKB");
@@ -344,6 +345,33 @@ Value Endgame<KQKR>::operator()(const Position& pos) const {
 
   return strongSide == pos.side_to_move() ? result : -result;
 }
+
+
+// ALAMOS
+// this ending is a win in alamos variant
+template<>
+Value Endgame<KRNKR>::operator()(const Position& pos) const {
+
+    assert(pos.non_pawn_material(strongSide) == KnightValueMg+RookValueMg);
+    assert(pos.non_pawn_material(weakSide  ) == RookValueMg);
+    assert(pos.count<ROOK>(strongSide) == 1);
+    assert(pos.count<KNIGHT>(strongSide) == 1);
+    assert(pos.count<ROOK>(weakSide  ) == 1);
+    assert(!pos.pieces(PAWN));
+
+    Square winnerKSq = pos.king_square(strongSide);
+    Square loserKSq = pos.king_square(weakSide);
+    Square rookSq = pos.list<ROOK>(weakSide)[0];
+
+    Value result =  VALUE_KNOWN_WIN
+    + PushToCorners[loserKSq]
+    + PushClose[distance(winnerKSq, loserKSq)]
+    + PushAway[distance(loserKSq, rookSq)];
+
+    return strongSide == pos.side_to_move() ? result : -result;
+}
+
+
 
 
 /// Some cases of trivial draws

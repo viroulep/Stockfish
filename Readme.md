@@ -14,6 +14,20 @@ cores on your computer.
 
 This version of Stockfish has support for Syzygybases.
 
+### Version notes
+
+This is a modified version to work with
+[Los Alamos chess](http://en.wikipedia.org/wiki/Los_Alamos_chess).
+
+It has been modified by [Mehdi Mhalla](http://membres-lig.imag.fr/mhalla/),
+[Frédéric Prost](http://membres-lig.imag.fr/prost/),
+and [Philippe Virouleau](http://www.philippevirouleau.fr/), and has been
+designed to be used with the
+[ChessFinder](https://github.com/viroulep/chessfinder) project.
+More informations on current works can be found on
+[this page](http://membres-lig.imag.fr/prost/MiniChessResolution/)
+
+We will do our best to maintain it up-to-date with Stockfish's upstream.
 
 ### Files
 
