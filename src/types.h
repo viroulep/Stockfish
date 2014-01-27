@@ -101,7 +101,7 @@ typedef uint64_t Key;
 typedef uint64_t Bitboard;
 
 const int MAX_MOVES      = 256;
-const int MAX_PLY        = 120;
+const int MAX_PLY        = 200; // ALAMOS 100 -> 200
 const int MAX_PLY_PLUS_6 = MAX_PLY + 6;
 
 /// A move needs 16 bits to be stored
@@ -181,8 +181,8 @@ enum Value {
   VALUE_INFINITE  = 32001,
   VALUE_NONE      = 32002,
 
-  VALUE_MATE_IN_MAX_PLY  =  VALUE_MATE - MAX_PLY,
-  VALUE_MATED_IN_MAX_PLY = -VALUE_MATE + MAX_PLY,
+  VALUE_MATE_IN_MAX_PLY  =  VALUE_MATE - MAX_PLY, // ALAMOS 2*
+  VALUE_MATED_IN_MAX_PLY = -VALUE_MATE + MAX_PLY, // ALAMOS 2*
 
   VALUE_ENSURE_INTEGER_SIZE_P = INT_MAX,
   VALUE_ENSURE_INTEGER_SIZE_N = INT_MIN,
@@ -451,6 +451,14 @@ inline bool is_ok(Move m) {
 inline const std::string to_string(Square s) {
   char ch[] = { to_char(file_of(s)), to_char(rank_of(s)), 0 };
   return ch;
+}
+
+//ALAMOS
+inline bool is_in_alamos(Square s) {
+   return (!(rank_of(s) == RANK_8 ||
+             rank_of(s) == RANK_1 ||
+             file_of(s) == FILE_A ||
+             file_of(s) == FILE_H));
 }
 
 #endif // #ifndef TYPES_H_INCLUDED

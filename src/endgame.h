@@ -42,7 +42,7 @@ enum EndgameType {
   KRKN,  // KR vs KN
   KQKP,  // KQ vs KP
   KQKR,  // KQ vs KR
-
+  KRNKR, // ALAMOS
 
   // Scaling functions
   SCALE_FUNS,

@@ -29,8 +29,9 @@ namespace {
 
     static const bool KingSide = (Cr == WHITE_OO || Cr == BLACK_OO);
 
-    if (pos.castling_impeded(Cr) || !pos.can_castle(Cr))
-        return mlist;
+    /*Los Alomos doesn't have castling*/
+    /*if (pos.castling_impeded(Cr) || !pos.can_castle(Cr))*/
+    return mlist;
 
     // After castling, the rook and king final positions are the same in Chess960
     // as they would be in standard chess.
@@ -74,6 +75,8 @@ namespace {
     while (b)
     {
         Square to = pop_lsb(&b);
+        if (!is_in_alamos(to))
+            continue;
 
         if (Type == CAPTURES || Type == EVASIONS || Type == NON_EVASIONS)
             (mlist++)->move = make<PROMOTION>(to - Delta, to, QUEEN);
@@ -81,7 +84,7 @@ namespace {
         if (Type == QUIETS || Type == EVASIONS || Type == NON_EVASIONS)
         {
             (mlist++)->move = make<PROMOTION>(to - Delta, to, ROOK);
-            (mlist++)->move = make<PROMOTION>(to - Delta, to, BISHOP);
+	    // ALAMOS NO BISHOP PROMOTION (mlist++)->move = make<PROMOTION>(to - Delta, to, BISHOP);
             (mlist++)->move = make<PROMOTION>(to - Delta, to, KNIGHT);
         }
 
@@ -104,12 +107,12 @@ namespace {
     // Compute our parametrized parameters at compile time, named according to
     // the point of view of white side.
     const Color    Them     = (Us == WHITE ? BLACK    : WHITE);
-    const Bitboard TRank8BB = (Us == WHITE ? Rank8BB  : Rank1BB);
-    const Bitboard TRank7BB = (Us == WHITE ? Rank7BB  : Rank2BB);
-    const Bitboard TRank3BB = (Us == WHITE ? Rank3BB  : Rank6BB);
-    const Square   Up       = (Us == WHITE ? DELTA_N  : DELTA_S);
-    const Square   Right    = (Us == WHITE ? DELTA_NE : DELTA_SW);
-    const Square   Left     = (Us == WHITE ? DELTA_NW : DELTA_SE);
+    const Bitboard TRank8BB = (Us == WHITE ? Rank7BB  : Rank2BB);
+    const Bitboard TRank7BB = (Us == WHITE ? Rank6BB  : Rank3BB);
+    const Bitboard TRank3BB = (Us == WHITE ? Rank1BB  : Rank1BB);
+    const Square Up = (Us == WHITE ? DELTA_N : DELTA_S);
+    const Square Right = (Us == WHITE ? DELTA_NE : DELTA_SW);
+    const Square Left = (Us == WHITE ? DELTA_NW : DELTA_SE);
 
     Bitboard b1, b2, dc1, dc2, emptySquares;
 
@@ -155,13 +158,15 @@ namespace {
         while (b1)
         {
             Square to = pop_lsb(&b1);
-            (mlist++)->move = make_move(to - Up, to);
+            if (is_in_alamos(to))
+                (mlist++)->move = make_move(to - Up, to);
         }
 
         while (b2)
         {
             Square to = pop_lsb(&b2);
-            (mlist++)->move = make_move(to - Up - Up, to);
+            if (is_in_alamos(to))
+                (mlist++)->move = make_move(to - Up - Up, to);
         }
     }
 
@@ -188,13 +193,15 @@ namespace {
         while (b1)
         {
             Square to = pop_lsb(&b1);
-            (mlist++)->move = make_move(to - Right, to);
+            if (is_in_alamos(to))
+                (mlist++)->move = make_move(to - Right, to);
         }
 
         while (b2)
         {
             Square to = pop_lsb(&b2);
-            (mlist++)->move = make_move(to - Left, to);
+            if (is_in_alamos(to))
+                (mlist++)->move = make_move(to - Left, to);
         }
 
         if (pos.ep_square() != SQ_NONE)
@@ -211,8 +218,11 @@ namespace {
 
             assert(b1);
 
-            while (b1)
-                (mlist++)->move = make<ENPASSANT>(pop_lsb(&b1), pos.ep_square());
+            while (b1) {
+                Square to = pop_lsb(&b1);
+                if (is_in_alamos(to))
+                    (mlist++)->move = make<ENPASSANT>(to, pos.ep_square());
+            }
         }
     }
 
@@ -245,8 +255,11 @@ namespace {
         if (Checks)
             b &= ci->checkSq[Pt];
 
-        while (b)
-            (mlist++)->move = make_move(from, pop_lsb(&b));
+        while (b) {
+            Square to = pop_lsb(&b);
+            if (is_in_alamos(to))
+                (mlist++)->move = make_move(from, to);
+        }
     }
 
     return mlist;
@@ -261,7 +274,7 @@ namespace {
 
     mlist = generate_pawn_moves<Us, Type>(pos, mlist, target, ci);
     mlist = generate_moves<KNIGHT, Checks>(pos, mlist, Us, target, ci);
-    mlist = generate_moves<BISHOP, Checks>(pos, mlist, Us, target, ci);
+    // ALAMOS no bishops mlist = generate_moves<BISHOP, Checks>(pos, mlist, Us, target, ci);
     mlist = generate_moves<  ROOK, Checks>(pos, mlist, Us, target, ci);
     mlist = generate_moves< QUEEN, Checks>(pos, mlist, Us, target, ci);
 
@@ -269,8 +282,11 @@ namespace {
     {
         Square ksq = pos.king_square(Us);
         Bitboard b = pos.attacks_from<KING>(ksq) & target;
-        while (b)
-            (mlist++)->move = make_move(ksq, pop_lsb(&b));
+        while (b) {
+            Square to = pop_lsb(&b);
+            if (is_in_alamos(to))
+                (mlist++)->move = make_move(ksq, to);
+        }
     }
 
     if (Type != CAPTURES && Type != EVASIONS && pos.can_castle(Us))
@@ -349,8 +365,11 @@ ExtMove* generate<QUIET_CHECKS>(const Position& pos, ExtMove* mlist) {
      if (pt == KING)
          b &= ~PseudoAttacks[QUEEN][ci.ksq];
 
-     while (b)
-         (mlist++)->move = make_move(from, pop_lsb(&b));
+     while (b) {
+         Square to = pop_lsb(&b);
+         if (is_in_alamos(to))
+             (mlist++)->move = make_move(from, to);
+     }
   }
 
   return us == WHITE ? generate_all<WHITE, QUIET_CHECKS>(pos, mlist, ~pos.pieces(), &ci)
@@ -381,8 +400,11 @@ ExtMove* generate<EVASIONS>(const Position& pos, ExtMove* mlist) {
 
   // Generate evasions for king, capture and non capture moves
   Bitboard b = pos.attacks_from<KING>(ksq) & ~pos.pieces(us) & ~sliderAttacks;
-  while (b)
-      (mlist++)->move = make_move(ksq, pop_lsb(&b));
+  while (b) {
+      Square to = pop_lsb(&b);
+      if (is_in_alamos(to))
+          (mlist++)->move = make_move(ksq, to);
+  }
 
   if (more_than_one(pos.checkers()))
       return mlist; // Double check, only a king move can save the day
