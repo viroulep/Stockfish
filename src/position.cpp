@@ -1129,8 +1129,10 @@ Value Position::see(Move m) const {
 
 bool Position::is_draw() const {
 
-  if (st->rule50 > 99 && (!checkers() || MoveList<LEGAL>(*this).size()))
-      return true;
+  /*
+   *if (st->rule50 > 99 && (!checkers() || MoveList<LEGAL>(*this).size()))
+   *    return true;
+   */
 
   StateInfo* stp = st;
   for (int i = 2, e = std::min(st->rule50, st->pliesFromNull); i <= e; i += 2)
