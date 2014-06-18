@@ -53,9 +53,10 @@ namespace {
   Score Connected[FILE_NB][RANK_NB];
 
   // Candidate passed pawn bonus by rank
+  /*Evaluation changed for alamos*/
   const Score CandidatePassed[RANK_NB] = {
-    S( 0, 0), S( 6, 13), S(6,13), S(14,29),
-    S(34,68), S(83,166), S(0, 0), S( 0, 0) };
+    S( 0, 0), S(0,0), S(14,29), S(34,68),
+    S(83,166), S(0, 0), S(0, 0), S( 0, 0) };
 
     // Levers bonus by rank
   const Score Lever[RANK_NB] = {
@@ -70,7 +71,7 @@ namespace {
 
   // Weakness of our pawn shelter in front of the king indexed by [rank]
   const Value ShelterWeakness[RANK_NB] =
-  { V(100), V(0), V(27), V(73), V(92), V(101), V(101) };
+  { V(100), V(0), V(0), V(27), V(73), V(92), V(101), V(101) };
 
   // Danger of enemy pawns moving toward our king indexed by
   // [no friendly pawn | pawn unblocked | pawn blocked][rank of enemy pawn]
@@ -223,7 +224,7 @@ namespace Pawns {
 
 void init() {
 
-  const int bonusesByFile[8] = { 1, 3, 3, 4, 4, 3, 3, 1 };
+  const int bonusesByFile[8] = { 1, 1, 3, 4, 4, 3, 1, 1 };
   int bonus;
 
   for (Rank r = RANK_1; r < RANK_8; ++r)
