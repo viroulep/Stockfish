@@ -821,7 +821,7 @@ void Position::do_move(Move m, StateInfo& newSt, const CheckInfo& ci, bool moveI
       {
           PieceType promotion = promotion_type(m);
 
-          assert(relative_rank(us, to) == RANK_8);
+          assert(relative_rank(us, to) == RANK_7);
           assert(promotion >= KNIGHT && promotion <= QUEEN);
 
           remove_piece(to, us, PAWN);
@@ -908,7 +908,7 @@ void Position::undo_move(Move m) {
   if (type_of(m) == PROMOTION)
   {
       assert(pt == promotion_type(m));
-      assert(relative_rank(us, to) == RANK_8);
+      assert(relative_rank(us, to) == RANK_7);
       assert(promotion_type(m) >= KNIGHT && promotion_type(m) <= QUEEN);
 
       remove_piece(to, us, promotion_type(m));
