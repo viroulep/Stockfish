@@ -318,6 +318,7 @@ namespace {
     // Iterative deepening loop until requested to stop or target depth reached
     while (++depth < DEPTH_MAX && !Signals.stop && (!Limits.depth || depth <= Limits.depth))
     {
+        size_t eMPV = (depth < 11) ? RootMoves.size() : multiPV;
         // Age out PV variability metric
         BestMoveChanges *= 0.5;
 
@@ -327,7 +328,7 @@ namespace {
             RootMoves[i].previousScore = RootMoves[i].score;
 
         // MultiPV loop. We perform a full root search for each PV line
-        for (PVIdx = 0; PVIdx < std::min(multiPV, RootMoves.size()) && !Signals.stop; ++PVIdx)
+        for (PVIdx = 0; PVIdx < std::min(eMPV, RootMoves.size()) && !Signals.stop; ++PVIdx)
         {
             // Reset aspiration window starting size
             if (depth >= 5 * ONE_PLY)
