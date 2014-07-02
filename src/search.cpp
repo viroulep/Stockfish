@@ -295,6 +295,7 @@ namespace {
     // Iterative deepening loop until requested to stop or target depth reached
     while (++depth <= MAX_PLY && !Signals.stop && (!Limits.depth || depth <= Limits.depth))
     {
+        unsigned int eMPV = (depth < 11) ? RootMoves.size() : MultiPV;
         // Age out PV variability metric
         BestMoveChanges *= 0.5;
 
@@ -304,7 +305,7 @@ namespace {
             RootMoves[i].prevScore = RootMoves[i].score;
 
         // MultiPV loop. We perform a full root search for each PV line
-        for (PVIdx = 0; PVIdx < MultiPV && !Signals.stop; ++PVIdx)
+        for (PVIdx = 0; PVIdx < eMPV && !Signals.stop; ++PVIdx)
         {
             // Reset aspiration window starting size
             if (depth >= 5)
