@@ -230,7 +230,7 @@ template<Color Us>
 Value Entry::shelter_storm(const Position& pos, Square ksq) {
 
   const Color Them = (Us == WHITE ? BLACK : WHITE);
-  const Bitboard Edges = (FileABB | FileHBB) & (Rank2BB | Rank3BB);
+  const Bitboard Edges = (FileBBB | FileGBB) & (Rank3BB | Rank4BB);
 
   Bitboard b = pos.pieces(PAWN) & (in_front_bb(Us, rank_of(ksq)) | rank_bb(ksq));
   Bitboard ourPawns = b & pos.pieces(Us);
@@ -241,10 +241,10 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
   for (File f = kf - File(1); f <= kf + File(1); ++f)
   {
       b = ourPawns & file_bb(f);
-      Rank rkUs = b ? relative_rank(Us, backmost_sq(Us, b)) : RANK_1;
+      Rank rkUs = b ? relative_rank(Us, backmost_sq(Us, b)) : RANK_2;
 
       b  = theirPawns & file_bb(f);
-      Rank rkThem = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
+      Rank rkThem = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_2;
 
       if (   (Edges & make_square(f, rkThem))
           && file_of(ksq) == f
